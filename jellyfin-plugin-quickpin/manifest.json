@@ -1,0 +1,29 @@
+[
+  {
+    "guid": "ba2facb8-c27e-4420-bda8-42197ded798a",
+    "name": "QuickPin",
+    "description": "Connexion par profils + code PIN, optimisée TV (Samsung/Tizen, webOS, navigateurs).",
+    "overview": "Écran de connexion façon Netflix avec code PIN.",
+    "owner": "Swindo-a",
+    "category": "Authentication",
+    "imageUrl": "",
+    "versions": [
+      {
+        "version": "1.0.0.1",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/Swindo-a/Profiles-Netflix-like-Jellyfin/releases/download/v1.0.0.1/quickpin-1.0.0.1.zip",
+        "checksum": "REMPLACER_PAR_LE_MD5_DU_ZIP_1.0.0.1",
+        "changelog": "Correction de la connexion par PIN (le retour à l'accueil échouait à cause du format des identifiants).",
+        "timestamp": "2026-06-12T00:00:00Z"
+      },
+      {
+        "version": "1.0.0.0",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/Swindo-a/Profiles-Netflix-like-Jellyfin/releases/download/v1.0.0.0/quickpin-1.0.0.0.zip",
+        "checksum": "0f00ee2c42b01d601e96fe9a594d105a",
+        "changelog": "Version initiale.",
+        "timestamp": "2026-06-12T00:00:00Z"
+      }
+    ]
+  }
+]

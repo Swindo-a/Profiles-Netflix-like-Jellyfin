@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QuickPin</title>
+</head>
+<body>
+<div id="QuickPinConfigPage" data-role="page" class="page type-interior pluginConfigurationPage"
+     data-require="emby-input,emby-button,emby-checkbox,emby-select">
+    <div data-role="content">
+        <div class="content-primary">
+            <form id="QuickPinConfigForm">
+                <div class="sectionTitleContainer flex align-items-center">
+                    <h2 class="sectionTitle">QuickPin</h2>
+                </div>
+                <p>Écran de connexion par profils avec code PIN, pensé pour la TV.
+                   Les PIN sont hachés côté serveur (PBKDF2) et ne sont jamais stockés en clair.</p>
+
+                <div class="inputContainer">
+                    <input is="emby-input" id="txtTitle" type="text" label="Titre de l'écran de connexion" />
+                    <div class="fieldDescription">Exemple : « Qui est-ce ? »</div>
+                </div>
+
+                <div class="selectContainer">
+                    <select is="emby-select" id="selPinLength" label="Longueur du code PIN">
+                        <option value="4">4 chiffres</option>
+                        <option value="5">5 chiffres</option>
+                        <option value="6">6 chiffres</option>
+                    </select>
+                    <div class="fieldDescription">Si vous changez la longueur, ressaisissez le PIN de chaque profil.</div>
+                </div>
+
+                <label class="checkboxContainer">
+                    <input is="emby-checkbox" id="chkClassicLink" type="checkbox" />
+                    <span>Afficher un lien « Connexion classique » (recommandé)</span>
+                </label>
+
+                <label class="checkboxContainer">
+                    <input is="emby-checkbox" id="chkInject" type="checkbox" />
+                    <span>Injecter automatiquement le script dans le client web servi par ce serveur</span>
+                </label>
+                <div class="fieldDescription" style="margin-bottom:1.5em;">
+                    Nécessite que le serveur puisse écrire dans le dossier web (voir README pour Docker).
+                    L'app Samsung/Tizen embarque sa propre copie du client web : voir le dossier
+                    <code>tizen/</code> du dépôt pour la TV.
+                </div>
+
+                <h3 class="sectionTitle" style="margin-top:1.5em;">Profils affichés</h3>
+                <p class="fieldDescription">Jusqu'à 6 profils. Laissez le champ PIN vide pour conserver un PIN déjà défini.</p>
+
+                <div id="profilesContainer"></div>
+
+                <button is="emby-button" type="button" id="btnAddProfile" class="raised" style="margin:1em 0;">
+                    <span>Ajouter un profil</span>
+                </button>
+
+                <br />
+                <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                    <span>Enregistrer</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        (function () {
+            var pluginUsers = [];
+
+            function el(id) { return document.getElementById(id); }
+
+            function profileRow(userId, hasPin) {
+                var row = document.createElement('div');
+                row.className = 'qp-profile-row';
+                row.style.cssText = 'display:flex;gap:1em;align-items:flex-end;margin-bottom:1em;flex-wrap:wrap;';
+
+                var selWrap = document.createElement('div');
+                selWrap.className = 'selectContainer';
+                selWrap.style.cssText = 'flex:2;min-width:14em;margin:0;';
+                var sel = document.createElement('select');
+                sel.setAttribute('is', 'emby-select');
+                sel.setAttribute('label', 'Utilisateur');
+                sel.className = 'qp-user';
+                var optEmpty = document.createElement('option');
+                optEmpty.value = '';
+                optEmpty.textContent = '— Choisir —';
+                sel.appendChild(optEmpty);
+                pluginUsers.forEach(function (u) {
+                    var o = document.createElement('option');
+                    o.value = u.Id;
+                    o.textContent = u.Name;
+                    if (userId && u.Id === userId) { o.selected = true; }
+                    sel.appendChild(o);
+                });
+                selWrap.appendChild(sel);
+
+                var pinWrap = document.createElement('div');
+                pinWrap.className = 'inputContainer';
+                pinWrap.style.cssText = 'flex:1;min-width:10em;margin:0;';
+                var pin = document.createElement('input');
+                pin.setAttribute('is', 'emby-input');
+                pin.setAttribute('type', 'password');
+                pin.setAttribute('label', 'Code PIN');
+                pin.setAttribute('inputmode', 'numeric');
+                pin.setAttribute('autocomplete', 'new-password');
+                pin.className = 'qp-pin';
+                pin.placeholder = hasPin ? 'PIN défini — laisser vide pour conserver' : '';
+                pinWrap.appendChild(pin);
+
+                var del = document.createElement('button');
+                del.setAttribute('is', 'emby-button');
+                del.setAttribute('type', 'button');
+                del.className = 'raised';
+                del.innerHTML = '<span>Supprimer</span>';
+                del.onclick = function () { row.parentNode.removeChild(row); };
+
+                row.appendChild(selWrap);
+                row.appendChild(pinWrap);
+                row.appendChild(del);
+                return row;
+            }
+
+            function addRow(userId, hasPin) {
+                var container = el('profilesContainer');
+                if (container.querySelectorAll('.qp-profile-row').length >= 6) {
+                    Dashboard.alert('Maximum 6 profils.');
+                    return;
+                }
+                container.appendChild(profileRow(userId || '', !!hasPin));
+            }
+
+            function load(page) {
+                Dashboard.showLoadingMsg();
+                ApiClient.getJSON(ApiClient.getUrl('QuickPin/AdminInfo')).then(function (d) {
+                    pluginUsers = d.Users || [];
+                    el('txtTitle').value = d.Title || 'Qui est-ce ?';
+                    el('selPinLength').value = String(d.PinLength || 4);
+                    el('chkClassicLink').checked = !!d.ShowClassicLoginLink;
+                    el('chkInject').checked = !!d.InjectScript;
+
+                    var container = el('profilesContainer');
+                    container.innerHTML = '';
+                    var profiles = d.Profiles || [];
+                    if (profiles.length) {
+                        profiles.forEach(function (p) { addRow(p.UserId, p.HasPin); });
+                    } else {
+                        addRow(); addRow(); addRow();
+                    }
+                    Dashboard.hideLoadingMsg();
+                }).catch(function () {
+                    Dashboard.hideLoadingMsg();
+                    Dashboard.alert('Impossible de charger la configuration QuickPin.');
+                });
+            }
+
+            function save() {
+                Dashboard.showLoadingMsg();
+                var rows = el('profilesContainer').querySelectorAll('.qp-profile-row');
+                var profiles = [];
+                rows.forEach(function (row) {
+                    var userId = row.querySelector('.qp-user').value;
+                    var pin = row.querySelector('.qp-pin').value;
+                    if (userId) {
+                        profiles.push({ UserId: userId, Pin: pin || null });
+                    }
+                });
+
+                var body = {
+                    Title: el('txtTitle').value,
+                    PinLength: parseInt(el('selPinLength').value, 10),
+                    ShowClassicLoginLink: el('chkClassicLink').checked,
+                    InjectScript: el('chkInject').checked,
+                    Profiles: profiles
+                };
+
+                ApiClient.ajax({
+                    type: 'POST',
+                    url: ApiClient.getUrl('QuickPin/AdminInfo'),
+                    data: JSON.stringify(body),
+                    contentType: 'application/json'
+                }).then(function () {
+                    Dashboard.hideLoadingMsg();
+                    Dashboard.alert('Configuration QuickPin enregistrée.');
+                    load();
+                }).catch(function (err) {
+                    Dashboard.hideLoadingMsg();
+                    if (err && err.json) {
+                        err.json().then(function (e) {
+                            Dashboard.alert(e.Message || 'Erreur lors de l\'enregistrement.');
+                        }).catch(function () {
+                            Dashboard.alert('Erreur lors de l\'enregistrement.');
+                        });
+                    } else {
+                        Dashboard.alert('Erreur lors de l\'enregistrement.');
+                    }
+                });
+            }
+
+            var page = el('QuickPinConfigPage');
+
+            page.addEventListener('pageshow', function () { load(page); });
+
+            el('btnAddProfile').addEventListener('click', function () { addRow(); });
+
+            el('QuickPinConfigForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                save();
+                return false;
+            });
+        })();
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+name: "QuickPin"
+guid: "ba2facb8-c27e-4420-bda8-42197ded798a"
+version: "1.0.0.1"
+targetAbi: "10.11.0.0"
+framework: "net9.0"
+owner: "VOTRE_COMPTE"
+overview: "Connexion par profils + code PIN, optimisée TV."
+description: >
+  Remplace l'écran de connexion par une sélection de profils façon Netflix
+  avec code PIN, navigable à la télécommande (Samsung/Tizen, webOS, navigateurs).
+category: "Authentication"
+artifacts:
+  - "Jellyfin.Plugin.QuickPin.dll"
+changelog: >
+  Correction : la connexion par PIN ne renvoyait plus correctement vers l accueil (format des identifiants jellyfin-web).
