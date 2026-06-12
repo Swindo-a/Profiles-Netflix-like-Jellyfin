@@ -1,0 +1,11 @@
+bin/
+obj/
+publish/
+dist/
+*.user
+.vs/
+.idea/
+node_modules/
+*.wgt
+.DS_Store
+tizen/work/
