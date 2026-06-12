@@ -12,7 +12,7 @@
         "version": "1.0.0.2",
         "targetAbi": "10.11.0.0",
         "sourceUrl": "https://github.com/Swindo-a/Profiles-Netflix-like-Jellyfin/releases/download/v1.0.0.2/quickpin-1.0.0.2.zip",
-        "checksum": "REMPLACER_PAR_LE_MD5_DU_ZIP_1.0.0.2",
+        "checksum": "2649178B24A8B3EBDF0F9F868C5D5EFA",
         "changelog": "Connexion PIN corrigée pour de bon (script client mis à jour : onAuthenticated + bon format d'identifiants).",
         "timestamp": "2026-06-12T00:00:00Z"
       }
