@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🔐 Jellyfin QuickPin
 
 Plugin Jellyfin qui remplace l'écran de connexion par une **sélection de profils façon
@@ -170,3 +171,7 @@ ce type (par exemple sur GitHub Pages) et ajoutez son URL dans Jellyfin :
 ## Licence
 
 MIT — voir [LICENSE](LICENSE).
+=======
+# Profiles-Netflix-like-Jellyfin
+On samsung TV, I have experienced some difficulties to connect different account so I asked Claude Fable 5 to create some profiles like Netflix where we only need to put a PIN to unlock the account that we wants 
+>>>>>>> a27d95cd79b8181a501d0164a09953025f8c0f3f
