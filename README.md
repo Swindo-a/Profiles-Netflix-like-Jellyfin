@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🔐 Jellyfin QuickPin
 
 Plugin Jellyfin qui remplace l'écran de connexion par une **sélection de profils façon
@@ -29,7 +30,7 @@ le plugin seul ne peut pas modifier son interface. Deux options :
 
 1. Téléchargez `Jellyfin.Plugin.QuickPin.dll` (depuis les *Releases* GitHub, ou
    compilez avec `dotnet publish -c Release`).
-2. Sur le serveur, créez le dossier `plugins/QuickPin_1.0.0.1/` dans le répertoire de
+2. Sur le serveur, créez le dossier `plugins/QuickPin_1.0.0.0/` dans le répertoire de
    données Jellyfin et placez-y la DLL.
 3. Redémarrez Jellyfin.
 4. Tableau de bord → **Plugins → QuickPin** : choisissez vos 3 profils (ou plus),
@@ -124,47 +125,6 @@ fourni compile à chaque push et attache la DLL zippée aux releases taguées `v
 > `Jellyfin.Data.Entities`, `Jellyfin.Database.Implementations.Enums` par
 > `Jellyfin.Data.Enums`, et ciblez `net8.0` avec les paquets `10.10.*`.
 
-## Publier sur GitHub
-
-```sh
-cd jellyfin-plugin-quickpin
-git init
-git add .
-git commit -m "QuickPin : connexion par profils + PIN pour Jellyfin"
-git branch -M main
-git remote add origin https://github.com/VOTRE_COMPTE/jellyfin-plugin-quickpin.git
-git push -u origin main
-
-# Pour publier une release (le workflow attache la DLL automatiquement) :
-git tag v1.0.0.0
-git push origin v1.0.0.0
-```
-
-### Dépôt de plugins (optionnel)
-
-Pour installer via *Dashboard → Plugins → Référentiels*, hébergez un `manifest.json` de
-ce type (par exemple sur GitHub Pages) et ajoutez son URL dans Jellyfin :
-
-```json
-[
-  {
-    "guid": "ba2facb8-c27e-4420-bda8-42197ded798a",
-    "name": "QuickPin",
-    "description": "Connexion par profils + code PIN, optimisée TV.",
-    "overview": "Écran de connexion façon Netflix avec PIN.",
-    "owner": "VOTRE_COMPTE",
-    "category": "Authentication",
-    "versions": [
-      {
-        "version": "1.0.0.0",
-        "targetAbi": "10.11.0.0",
-        "sourceUrl": "https://github.com/VOTRE_COMPTE/jellyfin-plugin-quickpin/releases/download/v1.0.0.0/quickpin-1.0.0.0.zip",
-        "checksum": "MD5_DU_ZIP",
-        "timestamp": "2026-06-12T00:00:00Z"
-      }
-    ]
-  }
-]
 ```
 
 ## Licence

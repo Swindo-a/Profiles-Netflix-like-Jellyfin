@@ -66,15 +66,6 @@
     /* ------------------------------------------------------------------ */
 
     function getDeviceId() {
-        // Priorité : l'identifiant réellement utilisé par l'ApiClient courant,
-        // pour que le token émis soit cohérent avec les requêtes suivantes.
-        try {
-            if (window.ApiClient && typeof window.ApiClient.deviceId === 'function') {
-                var d = window.ApiClient.deviceId();
-                if (d) { return d; }
-            }
-        } catch (e) { /* ignore */ }
-
         var id = null;
         try { id = localStorage.getItem('_deviceId2'); } catch (e) { /* ignore */ }
         if (!id) {
@@ -498,32 +489,10 @@
             return;
         }
 
-        try { sessionStorage.removeItem(SKIP_KEY); } catch (e) { /* ignore */ }
-        try { localStorage.setItem('enableAutoLogin', 'true'); } catch (e) { /* ignore */ }
-
-        // Chemin idéal : laisser jellyfin-web traiter le résultat exactement comme
-        // une connexion normale (enregistre les identifiants au bon format, met à
-        // jour l'ApiClient, signe l'utilisateur, émet les événements). C'est la
-        // méthode appelée en interne par authenticateUserByName.
-        try {
-            var ac = window.ApiClient;
-            if (ac && typeof ac.onAuthenticated === 'function') {
-                var p = ac.onAuthenticated(ac, result);
-                if (p && typeof p.then === 'function') {
-                    p.then(goHome, goHome);
-                } else {
-                    goHome();
-                }
-                return;
-            }
-        } catch (e) { /* on bascule sur le repli manuel */ }
-
-        // Repli (ex. contexte Tizen où ApiClient n'est pas encore prêt).
         try { saveCredentials(result); } catch (e) { /* on tente quand même */ }
-        goHome();
-    }
+        try { localStorage.setItem('enableAutoLogin', 'true'); } catch (e) { /* ignore */ }
+        try { sessionStorage.removeItem(SKIP_KEY); } catch (e) { /* ignore */ }
 
-    function goHome() {
         window.location.hash = '#/home.html';
         window.location.reload();
     }
@@ -552,9 +521,7 @@
         server.Id = result.ServerId || server.Id;
         server.AccessToken = result.AccessToken;
         server.UserId = result.User && result.User.Id ? result.User.Id : server.UserId;
-        // IMPORTANT : DateLastAccessed est un nombre (epoch ms), pas une chaîne ISO.
-        // jellyfin-web trie les serveurs dessus et la validation du token en dépend.
-        server.DateLastAccessed = new Date().getTime();
+        server.DateLastAccessed = new Date().toISOString();
         if (!server.ManualAddress && !server.LocalAddress && !server.RemoteAddress) {
             server.ManualAddress = state.base;
         }
