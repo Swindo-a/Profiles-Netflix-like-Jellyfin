@@ -125,53 +125,8 @@ fourni compile à chaque push et attache la DLL zippée aux releases taguées `v
 > `Jellyfin.Data.Entities`, `Jellyfin.Database.Implementations.Enums` par
 > `Jellyfin.Data.Enums`, et ciblez `net8.0` avec les paquets `10.10.*`.
 
-## Publier sur GitHub
-
-```sh
-cd jellyfin-plugin-quickpin
-git init
-git add .
-git commit -m "QuickPin : connexion par profils + PIN pour Jellyfin"
-git branch -M main
-git remote add origin https://github.com/VOTRE_COMPTE/jellyfin-plugin-quickpin.git
-git push -u origin main
-
-# Pour publier une release (le workflow attache la DLL automatiquement) :
-git tag v1.0.0.0
-git push origin v1.0.0.0
-```
-
-### Dépôt de plugins (optionnel)
-
-Pour installer via *Dashboard → Plugins → Référentiels*, hébergez un `manifest.json` de
-ce type (par exemple sur GitHub Pages) et ajoutez son URL dans Jellyfin :
-
-```json
-[
-  {
-    "guid": "ba2facb8-c27e-4420-bda8-42197ded798a",
-    "name": "QuickPin",
-    "description": "Connexion par profils + code PIN, optimisée TV.",
-    "overview": "Écran de connexion façon Netflix avec PIN.",
-    "owner": "VOTRE_COMPTE",
-    "category": "Authentication",
-    "versions": [
-      {
-        "version": "1.0.0.0",
-        "targetAbi": "10.11.0.0",
-        "sourceUrl": "https://github.com/VOTRE_COMPTE/jellyfin-plugin-quickpin/releases/download/v1.0.0.0/quickpin-1.0.0.0.zip",
-        "checksum": "MD5_DU_ZIP",
-        "timestamp": "2026-06-12T00:00:00Z"
-      }
-    ]
-  }
-]
 ```
 
 ## Licence
 
 MIT — voir [LICENSE](LICENSE).
-=======
-# Profiles-Netflix-like-Jellyfin
-On samsung TV, I have experienced some difficulties to connect different account so I asked Claude Fable 5 to create some profiles like Netflix where we only need to put a PIN to unlock the account that we wants 
->>>>>>> a27d95cd79b8181a501d0164a09953025f8c0f3f
